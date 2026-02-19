@@ -1,7 +1,7 @@
 """Tests for VariantQC and ConcordanceChecker."""
 
-from genomic_qc.variant_qc import VariantQC, VariantReport
-from genomic_qc.concordance import ConcordanceChecker, ConcordanceReport
+from genomic_qc.variant_qc import VariantQC
+from genomic_qc.concordance import ConcordanceChecker
 
 
 class TestVariantQC:
