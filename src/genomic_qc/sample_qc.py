@@ -1,7 +1,9 @@
-"""Sample-level QC module.
+"""Sample-level QC thresholds.
 
-Identifies problematic samples via contamination estimation,
-sex verification, and coverage checks.
+Applies thresholds to metrics computed elsewhere: contamination (for
+example VerifyBamID FREEMIX), X-chromosome inbreeding coefficient F with
+reported sex (PLINK --check-sex) and mean coverage (for example mosdepth).
+See :mod:`genomic_qc.readers` for loaders of those tools' output files.
 """
 
 from __future__ import annotations
@@ -69,14 +71,19 @@ class SampleQC:
             if cont > self.max_contamination
         ]
 
-    def check_sex(self, sample_sex: dict[str, tuple]) -> list[str]:
+    def check_sex(self, sample_sex: dict[str, tuple[int, float]]) -> list[str]:
         """Check sex assignment concordance.
 
         Parameters
         ----------
         sample_sex : dict
             {sample_id: (reported_sex, f_statistic)} where
-            reported_sex is 1 (male) or 2 (female).
+            reported_sex is 1 (male) or 2 (female). Samples with unknown
+            reported sex (0) are not failed here.
+
+        Males are expected to have F near 1 (one X chromosome, so no
+        heterozygous X calls) and females F near 0. The defaults (male
+        >= 0.8, female <= 0.2) are PLINK's --check-sex defaults.
         """
         failed: list[str] = []
         for sid, (reported, f_stat) in sample_sex.items():
@@ -93,7 +100,7 @@ class SampleQC:
     def run(
         self,
         contamination: dict[str, float],
-        sex: dict[str, tuple],
+        sex: dict[str, tuple[int, float]],
         coverage: dict[str, float],
     ) -> SampleReport:
         """Run all sample QC checks."""
