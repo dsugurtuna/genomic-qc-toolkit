@@ -7,7 +7,6 @@ to detect sample swaps or systematic calling errors.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Tuple
 
 
 @dataclass
@@ -18,7 +17,7 @@ class ConcordanceReport:
     concordant: int = 0
     discordant: int = 0
     missing: int = 0
-    flagged_samples: List[str] = field(default_factory=list)
+    flagged_samples: list[str] = field(default_factory=list)
 
     @property
     def concordance_rate(self) -> float:
@@ -49,9 +48,9 @@ class ConcordanceChecker:
 
     def compare_sample(
         self,
-        calls_a: Dict[str, str],
-        calls_b: Dict[str, str],
-    ) -> Tuple[int, int, int]:
+        calls_a: dict[str, str],
+        calls_b: dict[str, str],
+    ) -> tuple[int, int, int]:
         """Compare genotype calls for a single sample.
 
         Parameters
@@ -79,8 +78,8 @@ class ConcordanceChecker:
 
     def check(
         self,
-        platform_a: Dict[str, Dict[str, str]],
-        platform_b: Dict[str, Dict[str, str]],
+        platform_a: dict[str, dict[str, str]],
+        platform_b: dict[str, dict[str, str]],
     ) -> ConcordanceReport:
         """Check concordance across all shared samples.
 
@@ -94,9 +93,7 @@ class ConcordanceChecker:
         report.total_comparisons = len(shared)
 
         for sid in shared:
-            conc, disc, miss = self.compare_sample(
-                platform_a[sid], platform_b[sid]
-            )
+            conc, disc, miss = self.compare_sample(platform_a[sid], platform_b[sid])
             report.concordant += conc
             report.discordant += disc
             report.missing += miss

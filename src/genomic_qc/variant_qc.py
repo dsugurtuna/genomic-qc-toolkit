@@ -7,7 +7,6 @@ and genotyping cluster quality.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Set
 
 
 @dataclass
@@ -16,9 +15,9 @@ class VariantReport:
 
     total_variants: int = 0
     passed_variants: int = 0
-    failed_call_rate: List[str] = field(default_factory=list)
-    failed_batch_effect: List[str] = field(default_factory=list)
-    failed_duplicate: List[str] = field(default_factory=list)
+    failed_call_rate: list[str] = field(default_factory=list)
+    failed_batch_effect: list[str] = field(default_factory=list)
+    failed_duplicate: list[str] = field(default_factory=list)
 
     @property
     def pass_rate(self) -> float:
@@ -27,8 +26,12 @@ class VariantReport:
         return self.passed_variants / self.total_variants
 
     @property
-    def all_failed(self) -> Set[str]:
-        return set(self.failed_call_rate) | set(self.failed_batch_effect) | set(self.failed_duplicate)
+    def all_failed(self) -> set[str]:
+        return (
+            set(self.failed_call_rate)
+            | set(self.failed_batch_effect)
+            | set(self.failed_duplicate)
+        )
 
 
 class VariantQC:
@@ -50,18 +53,15 @@ class VariantQC:
         self.min_call_rate = min_call_rate
         self.max_batch_diff = max_batch_diff
 
-    def check_call_rates(
-        self, variant_call_rates: Dict[str, float]
-    ) -> List[str]:
+    def check_call_rates(self, variant_call_rates: dict[str, float]) -> list[str]:
         """Return variant IDs with call rate below threshold."""
         return [
-            vid for vid, cr in variant_call_rates.items()
-            if cr < self.min_call_rate
+            vid for vid, cr in variant_call_rates.items() if cr < self.min_call_rate
         ]
 
     def check_batch_effects(
-        self, variant_batch_rates: Dict[str, Dict[str, float]]
-    ) -> List[str]:
+        self, variant_batch_rates: dict[str, dict[str, float]]
+    ) -> list[str]:
         """Detect variants with inconsistent call rates across batches.
 
         Parameters
@@ -69,7 +69,7 @@ class VariantQC:
         variant_batch_rates : dict
             {variant_id: {batch_id: call_rate}}
         """
-        flagged: List[str] = []
+        flagged: list[str] = []
         for vid, batch_rates in variant_batch_rates.items():
             rates = list(batch_rates.values())
             if len(rates) < 2:
@@ -78,9 +78,7 @@ class VariantQC:
                 flagged.append(vid)
         return flagged
 
-    def find_duplicates(
-        self, variant_positions: Dict[str, str]
-    ) -> List[str]:
+    def find_duplicates(self, variant_positions: dict[str, str]) -> list[str]:
         """Find duplicate variants by chromosomal position.
 
         Parameters
@@ -88,8 +86,8 @@ class VariantQC:
         variant_positions : dict
             {variant_id: "chr:pos"}
         """
-        seen: Dict[str, str] = {}
-        duplicates: List[str] = []
+        seen: dict[str, str] = {}
+        duplicates: list[str] = []
         for vid, pos in variant_positions.items():
             if pos in seen:
                 duplicates.append(vid)
@@ -101,9 +99,9 @@ class VariantQC:
 
     def run(
         self,
-        call_rates: Dict[str, float],
-        batch_rates: Dict[str, Dict[str, float]],
-        positions: Dict[str, str],
+        call_rates: dict[str, float],
+        batch_rates: dict[str, dict[str, float]],
+        positions: dict[str, str],
     ) -> VariantReport:
         """Run all variant QC checks."""
         report = VariantReport(total_variants=len(call_rates))

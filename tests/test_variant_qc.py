@@ -1,7 +1,7 @@
 """Tests for VariantQC and ConcordanceChecker."""
 
-from genomic_qc.variant_qc import VariantQC
 from genomic_qc.concordance import ConcordanceChecker
+from genomic_qc.variant_qc import VariantQC
 
 
 class TestVariantQC:
@@ -12,20 +12,24 @@ class TestVariantQC:
 
     def test_batch_effects(self):
         qc = VariantQC(max_batch_diff=0.02)
-        failed = qc.check_batch_effects({
-            "rs1": {"B1": 0.99, "B2": 0.98},   # diff 0.01 → pass
-            "rs2": {"B1": 0.99, "B2": 0.95},   # diff 0.04 → fail
-        })
+        failed = qc.check_batch_effects(
+            {
+                "rs1": {"B1": 0.99, "B2": 0.98},  # diff 0.01 → pass
+                "rs2": {"B1": 0.99, "B2": 0.95},  # diff 0.04 → fail
+            }
+        )
         assert "rs2" in failed
         assert "rs1" not in failed
 
     def test_find_duplicates(self):
         qc = VariantQC()
-        dups = qc.find_duplicates({
-            "rs1": "chr1:100",
-            "rs2": "chr1:200",
-            "rs3": "chr1:100",
-        })
+        dups = qc.find_duplicates(
+            {
+                "rs1": "chr1:100",
+                "rs2": "chr1:200",
+                "rs3": "chr1:100",
+            }
+        )
         assert "rs1" in dups
         assert "rs3" in dups
         assert "rs2" not in dups
