@@ -11,12 +11,14 @@ class TestSampleQC:
 
     def test_sex_check(self):
         qc = SampleQC()
-        failed = qc.check_sex({
-            "S1": (1, 0.95),   # male, high F → pass
-            "S2": (1, 0.30),   # male, low F → fail
-            "S3": (2, 0.10),   # female, low F → pass
-            "S4": (2, 0.85),   # female, high F → fail
-        })
+        failed = qc.check_sex(
+            {
+                "S1": (1, 0.95),  # male, high F → pass
+                "S2": (1, 0.30),  # male, low F → fail
+                "S3": (2, 0.10),  # female, low F → pass
+                "S4": (2, 0.85),  # female, high F → fail
+            }
+        )
         assert "S2" in failed
         assert "S4" in failed
         assert "S1" not in failed

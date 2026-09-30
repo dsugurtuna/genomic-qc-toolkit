@@ -2,9 +2,9 @@
 
 __version__ = "1.0.0"
 
+from .concordance import ConcordanceChecker, ConcordanceReport
 from .sample_qc import SampleQC, SampleReport
 from .variant_qc import VariantQC, VariantReport
-from .concordance import ConcordanceChecker, ConcordanceReport
 
 __all__ = [
     "SampleQC",
