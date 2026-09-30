@@ -91,12 +91,6 @@ Used before release alongside [gwas-data-preparation](https://github.com/dsugurt
 - Strand-aware concordance for A/C/G/T genotypes.
 - One combined per-sample QC table as CSV.
 
-## Jira provenance
-
-| Ticket | Description |
-| :--- | :--- |
-| BIOIN-684 | End-to-end QC pipeline for genotyping array and WGS/WES data |
-
 ## Licence
 
 MIT is declared in `pyproject.toml`, but no licence file is included yet.
